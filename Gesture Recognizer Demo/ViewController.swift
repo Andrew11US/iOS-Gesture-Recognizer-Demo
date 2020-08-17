@@ -9,6 +9,9 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    @IBOutlet weak var itemView: UIView!
+    @IBOutlet weak var trashView: UIView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
