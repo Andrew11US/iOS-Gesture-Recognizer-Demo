@@ -12,12 +12,34 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var itemView: UIView!
     @IBOutlet weak var trashView: UIView!
+    
+    var itemViewOrigin: CGPoint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        addGesture(view: itemView)
+        itemViewOrigin = itemView.frame.origin
     }
 
+    func addGesture(view: UIView) {
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(handleGesture(sender:)))
+        view.addGestureRecognizer(pan)
+    }
+    
+    @objc func handleGesture(sender: UIPanGestureRecognizer) {
+        
+        guard let fileView = sender.view else { return }
+        let translation = sender.translation(in: view)
+        
+        switch sender.state {
+        case .began, .changed:
+            fileView.center = CGPoint(x: fileView.center.x + translation.x, y: fileView.center.y + translation.y)
+            sender.setTranslation(CGPoint.zero, in: view)
+        case .ended: break
+        default: break
+        }
+    }
 
 }
 
