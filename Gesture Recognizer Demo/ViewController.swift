@@ -20,6 +20,7 @@ class ViewController: UIViewController {
         
         addGesture(view: itemView)
         itemViewOrigin = itemView.frame.origin
+        view.bringSubviewToFront(itemView)
     }
 
     func addGesture(view: UIView) {
@@ -30,16 +31,28 @@ class ViewController: UIViewController {
     @objc func handleGesture(sender: UIPanGestureRecognizer) {
         
         guard let fileView = sender.view else { return }
-        let translation = sender.translation(in: view)
         
         switch sender.state {
         case .began, .changed:
-            fileView.center = CGPoint(x: fileView.center.x + translation.x, y: fileView.center.y + translation.y)
-            sender.setTranslation(CGPoint.zero, in: view)
-        case .ended: break
+            moveViewWithPan(view: fileView, sender: sender)
+        case .ended:
+            if itemView.frame.intersects(trashView.frame) {
+                UIView.animate(withDuration: 0.3) {
+                    fileView.alpha = 0.0
+                }
+            } else {
+                UIView.animate(withDuration: 0.3) {
+                    fileView.frame.origin = self.itemViewOrigin
+                }
+            }
         default: break
         }
     }
 
+    func moveViewWithPan(view: UIView, sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: view)
+        view.center = CGPoint(x: view.center.x + translation.x, y: view.center.y + translation.y)
+        sender.setTranslation(CGPoint.zero, in: view)
+    }
 }
 
